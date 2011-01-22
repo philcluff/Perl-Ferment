@@ -4,6 +4,8 @@ Perl Ferment - Yet Another tool to manage perl installs in your home directory.
 
 Perl Ferment builds perls into $HOME/perlferment/perls/ and symlinks them to $HOME/local_perl
 
+One of big advantage of Perl Ferment is that it lets you have multiple Perls with different CPAN libraries without the need to use local_lib.
+
 -----
 
 Perl Ferment comes with 3 tools:
