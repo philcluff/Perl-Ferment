@@ -1,1 +1,7 @@
 Perl Ferment - Yet Another tool to manage perl installs in your home directory.
+
+
+To install, add the following to your .bashrc:
+
+# Perlferment
+export PATH=/home/philc/local_perl/bin:/home/philc/perlferment/bin:${PATH}
