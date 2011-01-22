@@ -113,6 +113,16 @@ unless($return == 0) {
 }
 print color('green') . " OK!\n" . color('reset');
 
+# Update the version_metadata file.
+print "About to write version metadata file ($home/local_perl/version_metadata)";
+open(my $version_file, '>', "$home/local_perl/version_metadata") or die $!;
+print $version_file $target_perl_version or die $!;
+close $version_file;
+print color('green') . " OK!\n" . color('reset');
+
+
+
+
 # Print the usage.
 sub usage {
     print "USAGE: buildperl -version perl-5.10.1 -target new_perl_target_name \n";
