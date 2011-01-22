@@ -1,0 +1,22 @@
+#!/usr/bin/env perl
+
+use Term::ANSIColor;
+
+print "Listing perls in: /home/philc/perlferent/\n";
+
+my $used = readlink('/home/philc/local_perl');
+
+foreach my $dir (</home/philc/perlferment/perls/*>) {
+    $dir =~ /perls\/(.*)/;
+    print "     $1 (";
+    # Get the version Metadata
+    open (my $fh, '<', "$dir/version_metadata") or die 'Couldnt open.';
+    my @lines = <$fh>;
+    chomp($lines[0]);
+    print $lines[0] . ")";
+    close $fh;
+    print color('red') . ' * ' . color('reset') if($used eq $dir);
+    print "\n";
+}
+
+

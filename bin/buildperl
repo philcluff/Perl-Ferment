@@ -1,0 +1,133 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Term::ANSIColor;
+use Getopt::Long;
+use File::Path qw /make_path/;
+
+my $home = $ENV{"HOME"};
+
+my $target_perl_version;
+my $target_perl;
+my $help;
+
+# Process args.
+usage() unless (@ARGV > 1);
+my $result = GetOptions ('help|?' => \$help,
+			 "version=s"   => \$target_perl_version,
+			 "target=s"    => \$target_perl) or usage();
+usage() if $help;
+	      
+print "Going to build perl version $target_perl_version into target path $target_perl\n";
+print "\n";
+
+# Unlink the existing perl
+print "Unlinking current local_perl... ";
+unlink("$home/local_perl") or print "Could not remove symlink. Usualy not a problem. Continuing...";
+print color('green') . " OK!\n" . color('reset');
+
+# Create the path for the new perl
+print "Creating path for new perl ($home/perlferment/perls/$target_perl)... ";
+make_path("$home/perlferment/perls/$target_perl") or print "Could not create path...";
+unless (-d "$home/perlferment/perls/$target_perl") {
+    print color('red') . "Path for this perl does not exist\n" . color('reset');
+    exit();
+}
+print color('green') . " OK!\n" . color('reset');
+
+# Link the new perl path to the build symlink
+print "Linking new perl to local_perl symlink...";
+symlink("$home/perlferment/perls/$target_perl", "$home/local_perl")
+    or die("Could not symlink new perl into place: $1");
+print color('green') . " OK!\n" . color('reset');
+
+print "Checking for the perl build directory... ";
+unless (-d "$home/perlferment/build/$target_perl_version") {
+    print color('red') . "No perl build for this version.\n" . color('reset');
+    exit();
+}
+print color('green') . " OK!\n" . color('reset');
+
+# Remove existing configure files
+print "Removing existing build configuration files: (config.sh Policy.sh)... ";
+unlink("$home/perlferment/build/$target_perl_version/config.sh");
+unlink("$home/perlferment/build/$target_perl_version/Policy.sh");
+if((-f "$home/perlferment/build/$target_perl_version/config.sh") or 
+   (-f "$home/perlferment/build/$target_perl_version/Policy.sh")) {
+    print color('red') . "Could not remove config files from build directory.\n" . color('reset');
+    exit();
+}
+print color('green') . " OK!\n" . color('reset'); 
+
+# Generate and run the configure line
+my $command = "(cd $home/perlferment/build/$target_perl_version/; /bin/sh Configure -de -Dprefix=$home/local_perl/;) >> '$home/perlferment/build.log' 2>&1";
+print "About to configure perl using command: $command\n";
+print "You may wish to run 'tail -f $home/perlferment/build.log' in another shell.\n";
+print "Running configure... ";
+my $return = system($command) >> 8;
+unless($return == 0) {
+    print color('red') . "Configure exited with value: $return.\n" . color('reset');
+    exit();
+}
+print color('green') . " OK!\n" . color('reset');
+
+# Run make
+$command = "(cd $home/perlferment/build/$target_perl_version/; make;) >> '$home/perlferment/build.log' 2>&1";
+print "About to make perl using command: $command\n";
+print "You may wish to run 'tail -f $home/perlferment/build.log' in another shell.\n";
+print "Running make... ";
+$return = system($command) >> 8;
+unless($return == 0) {
+    print color('red') . "Make exited with value: $return.\n" . color('reset');
+    exit();
+}
+print color('green') . " OK!\n" . color('reset');
+
+# Run make test
+$command = "(cd $home/perlferment/build/$target_perl_version/; make test;) >> '$home/perlferment/build.log' 2>&1";
+print "About to test perl using command: $command\n";
+print "You may wish to run 'tail -f $home/perlferment/build.log' in another shell.\n";
+print "Running make test... ";
+$return = system($command) >> 8;
+unless($return == 0) {
+    print color('red') . "Make test exited with value: $return.\n" . color('reset');
+    exit();
+}
+print color('green') . " OK!\n" . color('reset');
+
+# Run make install
+$command = "(cd $home/perlferment/build/$target_perl_version/; make install;) >> '$home/perlferment/build.log' 2>&1";
+print "About to install perl using command: $command\n";
+print "You may wish to run 'tail -f $home/perlferment/build.log' in another shell.\n";
+print "Running make install... ";
+$return = system($command) >> 8;
+unless($return == 0) {
+    print color('red') . "Make install exited with value: $return.\n" . color('reset');
+    exit();
+}
+print color('green') . " OK!\n" . color('reset');
+
+
+# my $used = readlink('/home/philc/local_perl');
+
+# foreach my $dir (</home/philc/perlferment/perls/*>) {
+#     $dir =~ /perls\/(.*)/;
+#     print "     $1 (";
+#     # Get the version Metadata
+#     open (my $fh, '<', "$dir/version_metadata") or die 'Couldnt open.';
+#     my @lines = <$fh>;
+#     chomp($lines[0]);
+#     print $lines[0] . ")";
+#     close $fh;
+#     print color('red') . ' * ' . color('reset') if($used eq $dir);
+#     print "\n";
+# }
+
+
+# Print the usage.
+sub usage {
+    print "USAGE: buildperl -version perl-5.10.1 -target new_perl_target_name \n";
+    exit();
+}

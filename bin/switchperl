@@ -1,0 +1,22 @@
+#!/usr/bin/env perl
+
+use Term::ANSIColor;
+
+my $target_perl = $ARGV[0];
+
+if ( -e "/home/philc/perlferment/perls/$target_perl/bin/perl") {
+
+    print "Switching to perl: $target_perl\n";
+
+    unlink('/home/philc/local_perl');
+
+    print "Linking: /home/philc/perlferment/perls/$target_perl to /home/philc/local_perl\n";
+
+    symlink("/home/philc/perlferment/perls/$target_perl", '/home/philc/local_perl') or die 'Oh noes!';
+
+    print color('green') . "Updated perl successfully! \n" . color('reset');
+
+}
+else {
+    print color('red') . "No perl install found at this location.\n" . color('reset');
+}
