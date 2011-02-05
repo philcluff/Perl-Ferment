@@ -19,7 +19,7 @@ my $result = GetOptions ('help|?' => \$help,
 			 "version=s"   => \$target_perl_version,
 			 "target=s"    => \$target_perl) or usage();
 usage() if $help;
-	      
+
 print "Going to build perl version $target_perl_version into target path $target_perl\n";
 print "\n";
 
