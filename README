@@ -37,5 +37,23 @@ Installing
 
 To enable Perl Ferment, add the following to your .bashrc:
 
-# Perlferment (Resets the poin
+# Perlferment
 export PATH=/home/philc/local_perl/bin:/home/philc/perlferment/bin:${PATH}
+
+
+-----
+
+Tutorial
+
+Add Perlferment to your path as demonstrated above
+
+cd
+mkdir perlferment
+cd perlferment
+git clone git@github.com:GeneticGenesis/Perl-Ferment.git .
+cd build
+wget http://www.cpan.org/src/perl-5.10.1.tar.gz
+tar -xvzf perl-5.10.1.tar.gz
+cd
+buildperl -version perl-5.10.1 -target perl_nickname
+switchperl perl_nickname
