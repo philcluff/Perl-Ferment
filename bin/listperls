@@ -2,11 +2,13 @@
 
 use Term::ANSIColor;
 
-print "Listing perls in: /home/philc/perlferent/\n";
+my $home = $ENV{"HOME"};
 
-my $used = readlink('/home/philc/local_perl');
+print "Listing perls in: $home/perlferent/\n";
 
-foreach my $dir (</home/philc/perlferment/perls/*>) {
+my $used = readlink("$home/local_perl");
+
+foreach my $dir (<$home/perlferment/perls/*>) {
     $dir =~ /perls\/(.*)/;
     print "     $1 (";
     # Get the version Metadata

@@ -2,17 +2,19 @@
 
 use Term::ANSIColor;
 
+my $home = $ENV{"HOME"};
+
 my $target_perl = $ARGV[0];
 
-if ( -e "/home/philc/perlferment/perls/$target_perl/bin/perl") {
+if ( -e "$home/perlferment/perls/$target_perl/bin/perl") {
 
     print "Switching to perl: $target_perl\n";
 
-    unlink('/home/philc/local_perl');
+    unlink("$home/local_perl");
 
-    print "Linking: /home/philc/perlferment/perls/$target_perl to /home/philc/local_perl\n";
+    print "Linking: $home/perlferment/perls/$target_perl to $home/local_perl\n";
 
-    symlink("/home/philc/perlferment/perls/$target_perl", '/home/philc/local_perl') or die 'Oh noes!';
+    symlink("$home/perlferment/perls/$target_perl", "$home/local_perl") or die 'Oh noes!';
 
     print color('green') . "Updated perl successfully! \n" . color('reset');
 
