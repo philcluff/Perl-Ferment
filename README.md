@@ -13,21 +13,26 @@ Tools
 Perl Ferment comes with 3 tools:
 
 
-* buildperl : Build a specific version of perl $HOME/perlferment/perls/
+buildperl
+---------
+
+Build a specific version of perl $HOME/perlferment/perls/
 
 Usage: buildperl -version perl-5.12.1 -target clean_5_12_1
 
 The specified version of perl must be present in $HOME/perlferment/build/ - In the future, Perl Ferment will fetch from perl.org
 
 
-* listperls :
+listperls
+---------
 
 Usage: listperls
 
 Shows the current perl installs in $HOME/perlferment/build/ and which one is in use at the moment.
 
 
-* switchperl :
+switchperl
+----------
 
 Usage: switchperl target_name
 
